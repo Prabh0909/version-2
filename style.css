@@ -300,7 +300,7 @@ body[data-style=stamp] .float::after{transform:translate(0,11px) scale(var(--sx,
 .styleBtn{position:static;transform:none;width:auto;align-self:center;padding-inline:28px;margin-bottom:14px}
 
 /* save + visit: share the card's width equally */
-.actions{gap:12px}
+.actions{gap:12px;margin-top:12px}
 .actions button,.actions a{flex:1;display:flex;align-items:center;justify-content:center}
 
 /* ===== eh Frosted glass buttons effect create karda aa (first card only) ===== */
