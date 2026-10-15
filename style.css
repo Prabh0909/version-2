@@ -1,0 +1,341 @@
+/* ===== shared: page, buttons, movement ===== */
+*{box-sizing:border-box;margin:0}
+html,body{height:100%}
+body{display:grid;place-items:center;overflow:hidden;--bc:#2a3cc7;--bh:#fff;color:var(--bc);font-family:'Patrick Hand',cursive}
+body[data-style=doodle]{
+  background:
+    linear-gradient(90deg,transparent 7%,rgba(211,32,47,.4) 7%,rgba(211,32,47,.4) calc(7% + 1.5px),transparent calc(7% + 1.5px)),
+    repeating-linear-gradient(transparent 0 31px,rgba(60,80,200,.22) 31px 32px),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 .4 0 0 0 0 .35 0 0 0 0 .2 0 0 0 .09 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+    #f2eddc}
+body[data-style=stamp]{--bc:#eee;--bh:#111;font-family:'Poppins',sans-serif;
+  background:linear-gradient(rgba(0,0,0,.45),rgba(0,0,0,.45)),url("bg.jpg") center/cover no-repeat fixed,#1a1a1c}
+.stage{display:flex;flex-direction:column;align-items:center;gap:28px}
+
+.actions{display:flex;gap:12px;opacity:0;transition:opacity .8s 1.8s}
+.actions.show{opacity:1}
+.actions button,.actions a,.styleBtn{font:inherit;font-size:1rem;color:var(--bc);background:transparent;border:2px solid var(--bc);padding:10px 20px;border-radius:30px;text-decoration:none;cursor:pointer;transition:.2s}
+.actions button:hover,.actions a:hover,.styleBtn:hover{background:var(--bc);color:var(--bh)}
+.actions button:focus-visible,.actions a:focus-visible,.styleBtn:focus-visible{outline:2px solid #d3202f;outline-offset:3px}
+.styleBtn{position:fixed;top:18px;left:50%;transform:translateX(-50%);z-index:5;padding:2.8px 18px;font-size:.85rem}
+.styleBtn:disabled{opacity:.5;pointer-events:none}
+
+/* ===== Natural premium floating ===== */
+
+.float {
+  position: relative;
+  animation: naturalFloat 4s ease-in-out infinite;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+/* Gentle up-and-down movement with subtle tilt */
+@keyframes naturalFloat {
+  0%, 100% {
+    transform: translateY(0) rotate(-0.8deg);
+  }
+
+  50% {
+    transform: translateY(-15px) rotate(0.6deg);
+  }
+}
+
+
+.spin{transform-style:preserve-3d;transform:perspective(1200px) rotateX(0) rotateY(0);touch-action:none;cursor:grab;user-select:none;-webkit-user-select:none}
+.spin:active{cursor:grabbing}
+
+.card{will-change:transform}
+.card{width:min(272px,72vw);aspect-ratio:275/435;position:relative;transform-style:preserve-3d;opacity:0;transform:rotateY(180deg) scale(.8)}
+.card.show{animation:pop 2.4s cubic-bezier(.45,.05,.25,1) forwards}
+.card.leave{animation:out .45s ease-in forwards}
+@keyframes pop{0%{opacity:0;transform:rotateY(180deg) scale(.8)}25%{opacity:1}100%{opacity:1;transform:rotateY(360deg) scale(1)}}
+@keyframes out{from{opacity:1;transform:rotateY(360deg) scale(1)}to{opacity:0;transform:rotateY(450deg) scale(.85)}}
+@media (prefers-reduced-motion:reduce){.card.show{animation:none;opacity:1;transform:none}}
+
+.side,.slab{position:absolute;inset:0;border-radius:var(--rad)}
+.side{overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.front{transform:translateZ(var(--t))}
+.back{transform:rotateY(180deg) translateZ(var(--t))}
+
+/* ===== STYLE 1: doodle notebook ===== */
+.card[data-s=doodle]{--rad:16px 10px 18px 9px / 10px 18px 9px 16px;--t:14px;--ink:#2a3cc7;--red:#d3202f;--paper:#f2eddc}
+.card[data-s=doodle] .slab{background:#ebe5d0;border:2px solid var(--ink)}
+.card[data-s=doodle] .side{border:3px solid var(--ink);color:var(--ink);
+  background:linear-gradient(90deg,transparent 40px,rgba(211,32,47,.4) 40px,rgba(211,32,47,.4) 41.5px,transparent 41.5px),
+    repeating-linear-gradient(transparent 0 23px,rgba(60,80,200,.22) 23px 24px),var(--paper);
+  box-shadow:5px 6px 0 rgba(30,40,120,.18)}
+.card[data-s=doodle] .back{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:6px;text-align:center}
+.card[data-s=doodle] .logo path{fill:none;stroke:var(--ink);stroke-width:4;stroke-linecap:round;stroke-linejoin:round}
+.card[data-s=doodle] .logo circle{fill:var(--red)}
+.card[data-s=doodle] .front .logo{position:absolute;left:54px;top:30px;width:58px}
+.card[data-s=doodle] .logo.big{width:110px;margin-bottom:6px}
+.card[data-s=doodle] .sq{position:absolute;left:54px;top:218px;width:130px}
+.card[data-s=doodle] .sq path{fill:none;stroke:var(--red);stroke-width:2.5;stroke-linecap:round}
+.card[data-s=doodle] .name{position:absolute;left:54px;top:112px;font:400 40px/42px 'Gochi Hand',cursive}
+.card[data-s=doodle] .name span{display:block}
+.card[data-s=doodle] .ttl{position:absolute;left:54px;top:236px;font-size:22px;color:var(--red)}
+.card[data-s=doodle] .info{position:absolute;left:54px;font-size:16px}
+.card[data-s=doodle] .info.p{bottom:62px}
+.card[data-s=doodle] .info.e{bottom:38px}
+.card[data-s=doodle] .bname{font:400 44px/1 'Gochi Hand',cursive}
+.card[data-s=doodle] .bsub{font-size:20px;color:var(--red)}
+.card[data-s=doodle] .site{position:absolute;bottom:24px;left:50%;transform:translateX(-50%);padding:4px 14px;border:2px dashed var(--ink);border-radius:8px;font-size:15px;white-space:nowrap}
+
+/* ===== STYLE 2: red stamp ticket ===== */
+.card[data-s=stamp]{--rad:28px;--t:12px;font-family:'Poppins',sans-serif}
+.card[data-s=stamp] .slab:nth-child(odd){background:#f4efe8}
+.card[data-s=stamp] .slab:nth-child(even){background:#e3dccd}
+.card[data-s=stamp] .side{color:#fff;background:linear-gradient(160deg,#b52b29,#971c1c)}
+.card[data-s=stamp] .side::before{content:"";position:absolute;inset:0;background:url("paper.jpg") center/400px repeat;mix-blend-mode:overlay;opacity:.6;pointer-events:none}
+.card[data-s=stamp] .front{
+  background:
+   linear-gradient(rgba(255,255,255,.16),rgba(255,255,255,.16)) 62% 0/1px 71% no-repeat,
+   linear-gradient(rgba(255,255,255,.16),rgba(255,255,255,.16)) 0 19%/100% 1px no-repeat,
+   linear-gradient(rgba(255,255,255,.16),rgba(255,255,255,.16)) 0 71%/100% 1px no-repeat,
+   linear-gradient(160deg,#b52b29,#971c1c)}
+.card[data-s=stamp] .brand{position:absolute;top:30px;left:26px;line-height:1}
+.card[data-s=stamp] .brand b{display:block;font-weight:600;font-size:1.55rem;letter-spacing:-.02em}
+.card[data-s=stamp] .brand small{display:block;font-weight:300;font-size:.78rem;letter-spacing:.03em;margin-top:2px}
+.card[data-s=stamp] .mark{position:absolute;left:4%;top:24%;font:700 11rem/1 'Noto Sans Devanagari',sans-serif;color:rgba(255,255,255,.1);pointer-events:none}
+.card[data-s=stamp] .vert{position:absolute;right:-18px;top:6%;writing-mode:vertical-rl;transform:rotate(180deg);font-weight:600;font-size:5.4rem;line-height:1;color:rgba(255,255,255,.09);pointer-events:none;white-space:nowrap}
+.card[data-s=stamp] .who{position:absolute;left:26px;right:26px;bottom:30px}
+.card[data-s=stamp] .who h1{font-weight:300;font-size:1.35rem;line-height:1.2;letter-spacing:-.01em}
+.card[data-s=stamp] .who h1 b{font-weight:600}
+.card[data-s=stamp] .ttl{font-weight:600;font-size:.88rem;margin:8px 0 10px}
+.card[data-s=stamp] .info{font-size:.72rem;opacity:.9;margin-top:4px}
+.card[data-s=stamp] .info.em{padding-top:8px;margin-top:10px;border-top:1px solid rgba(255,255,255,.2)}
+.card[data-s=stamp] .tab{position:absolute;top:0;left:0;width:46px;height:40px;background:#f4efe8;color:#b52b29;border-bottom-right-radius:14px;display:grid;place-items:center;font:700 1.3rem/1 'Noto Sans Devanagari',sans-serif;font-style:normal}
+.card[data-s=stamp] .brand.c{top:50%;left:0;right:0;text-align:center;transform:translateY(-50%)}
+.card[data-s=stamp] .brand.c b{font-size:2.3rem}
+.card[data-s=stamp] .brand.c small{font-size:1rem}
+.card[data-s=stamp] .site{position:absolute;bottom:26px;left:0;right:0;text-align:center;font-size:.72rem;font-weight:500}
+
+/* ===== STYLE 4: charcoal + kraft blocks ===== */
+body[data-style=kraft]{--bc:#c9a468;--bh:#111;font-family:'Chakra Petch',sans-serif;
+  background:radial-gradient(ellipse at 50% 40%,#232325,#0b0b0c 75%)}
+.card[data-s=kraft]{--rad:6px;--t:14px;font-family:'Chakra Petch',sans-serif}
+.card[data-s=kraft] .slab:nth-child(odd){background:#1b1b1c}
+.card[data-s=kraft] .slab:nth-child(even){background:#0e0e0f}
+.card[data-s=kraft] .side{color:#fff;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .13 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+    #38383a}
+.card[data-s=kraft] .hatch{position:absolute;left:0;top:0;width:110px;height:110px;
+  background:repeating-linear-gradient(135deg,rgba(201,164,104,.45) 0 1px,transparent 1px 4px);
+  -webkit-mask-image:linear-gradient(135deg,#000,transparent 75%);mask-image:linear-gradient(135deg,#000,transparent 75%)}
+.card[data-s=kraft] .kb{position:absolute;right:0;bottom:0;width:120px;height:120px;
+  background:
+    linear-gradient(#c9a468,#c9a468) 0 0/50% 50% no-repeat,
+    linear-gradient(#a87a45,#a87a45) 100% 0/50% 50% no-repeat,
+    linear-gradient(#b58a63,#b58a63) 0 100%/50% 50% no-repeat}
+.card[data-s=kraft] .kb.big{left:0;top:0;right:auto;bottom:auto;width:170px;height:170px}
+.card[data-s=kraft] .mk{position:absolute;right:24px;top:26px;width:44px}
+.card[data-s=kraft] .mk circle{fill:none;stroke:#c9a468;stroke-width:2}
+.card[data-s=kraft] .mk text{font:700 22px 'Chakra Petch';fill:#c9a468}
+.card[data-s=kraft] .name{position:absolute;left:24px;top:150px;font:700 21px/1.25 'Chakra Petch';letter-spacing:.08em;text-transform:uppercase}
+.card[data-s=kraft] .name span{display:block}
+.card[data-s=kraft] .ttl{position:absolute;left:24px;top:210px;font-size:13px;color:#c9a468;letter-spacing:.04em}
+.card[data-s=kraft] .kc{position:absolute;left:24px;font-size:13px;color:#c9a468}
+.card[data-s=kraft] .kc.a{top:254px}
+.card[data-s=kraft] .kc.b{top:276px}
+.card[data-s=kraft] .web{position:absolute;left:24px;bottom:28px;font-size:12px;letter-spacing:.04em}
+.card[data-s=kraft] .lock{position:absolute;right:24px;bottom:28px;display:flex;align-items:center;gap:10px}
+.card[data-s=kraft] .lock .mk{position:static;width:40px}
+.card[data-s=kraft] .lock b{display:block;font:700 18px 'Chakra Petch';letter-spacing:.2em;text-transform:uppercase}
+.card[data-s=kraft] .lock small{display:block;font-size:9px;letter-spacing:.3em;color:#c9a468;text-transform:uppercase}
+/* ===== STYLE 5: gallery / watercolour ===== */
+body[data-style=gallery]{--bc:#2b2b2b;--bh:#fff;font-family:'Jost',sans-serif;
+  background:radial-gradient(ellipse at 50% 35%,#efeae1,#cfc8ba 85%)}
+.card[data-s=gallery]{--rad:4px;--t:10px;font-family:'Jost',sans-serif;color:#2b2b2b}
+.card[data-s=gallery] .slab:nth-child(odd){background:#faf7f2}
+.card[data-s=gallery] .slab:nth-child(even){background:#e6dfd1}
+.card[data-s=gallery] .side{
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 .3 0 0 0 0 .25 0 0 0 0 .2 0 0 0 .1 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"),
+    #faf7f2}
+.card[data-s=gallery] .wash{position:absolute;left:0;top:0;right:0;height:205px;
+  background:
+    radial-gradient(circle 120px at 70px 58px,rgba(214,110,78,.85),transparent),
+    radial-gradient(circle 105px at 190px 40px,rgba(232,186,92,.8),transparent),
+    radial-gradient(circle 115px at 150px 135px,rgba(70,150,160,.75),transparent),
+    radial-gradient(circle 100px at 35px 165px,rgba(86,92,170,.6),transparent);
+  -webkit-mask-image:linear-gradient(#000 60%,transparent);mask-image:linear-gradient(#000 60%,transparent)}
+.card[data-s=gallery] .wash.full{height:100%;-webkit-mask-image:none;mask-image:none;
+  background:
+    linear-gradient(rgba(30,20,15,.38),rgba(30,20,15,.38)),
+    radial-gradient(circle 190px at 70px 90px,rgb(214,110,78),transparent),
+    radial-gradient(circle 170px at 210px 60px,rgb(232,186,92),transparent),
+    radial-gradient(circle 210px at 170px 250px,rgb(70,150,160),transparent),
+    radial-gradient(circle 190px at 40px 370px,rgb(86,92,170),transparent),
+    radial-gradient(circle 160px at 235px 400px,rgb(214,110,78),transparent),
+    #3a2c25}
+.card[data-s=gallery] .mono{position:absolute;left:24px;top:24px;width:38px;height:38px;border:1.5px solid #fff;border-radius:50%;
+  display:grid;place-items:center;color:#fff;font:italic 500 22px 'Cormorant Garamond',serif}
+.card[data-s=gallery] .name{position:absolute;left:24px;top:206px;font:600 38px/40px 'Cormorant Garamond',serif}
+.card[data-s=gallery] .name span{display:block}
+.card[data-s=gallery] .name span:last-child{font-style:italic;font-weight:500}
+.card[data-s=gallery] .ttl{position:absolute;left:24px;top:296px;font-size:10.5px;letter-spacing:.24em;text-transform:uppercase;color:#6b5f55}
+.card[data-s=gallery] .grule{position:absolute;left:24px;width:44px;top:322px;height:1px;background:#2b2b2b}
+.card[data-s=gallery] .gc{position:absolute;left:24px;font-size:12.5px;letter-spacing:.03em}
+.card[data-s=gallery] .gc.a{top:338px}
+.card[data-s=gallery] .gc.b{top:359px}
+.card[data-s=gallery] .chips{position:absolute;left:24px;bottom:24px;display:flex;gap:7px}
+.card[data-s=gallery] .chips i{width:14px;height:14px;border-radius:50%}
+.card[data-s=gallery] .chips i:nth-child(1){background:#d66e4e}
+.card[data-s=gallery] .chips i:nth-child(2){background:#e8ba5c}
+.card[data-s=gallery] .chips i:nth-child(3){background:#4696a0}
+.card[data-s=gallery] .chips i:nth-child(4){background:#565caa}
+.card[data-s=gallery] .chips i:nth-child(5){background:#2b2b2b}
+.card[data-s=gallery] .back{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;text-align:center;color:#fff}
+.card[data-s=gallery] .gname{position:relative;font:600 40px/1 'Cormorant Garamond',serif;text-shadow:0 1px 14px rgba(0,0,0,.3)}
+.card[data-s=gallery] .gsub{position:relative;font-size:11px;letter-spacing:.3em;text-transform:uppercase}
+.card[data-s=gallery] .gsite{position:absolute;bottom:26px;left:0;right:0;font-size:12px;letter-spacing:.06em}
+/* ----- stamp card upgrades ----- */
+.card[data-s=stamp] .mark{font:700 12rem/1 'Poppins',sans-serif;left:6%;top:22%;color:rgba(255,255,255,.08)}
+.card[data-s=stamp] .tab{font:700 1.3rem/1 'Poppins',sans-serif}
+.card[data-s=stamp] .brush{position:absolute;left:-10px;top:170px;width:300px;transform:rotate(-8deg);transform-origin:0 0;pointer-events:none}
+.card[data-s=stamp] .brush path{fill:none;stroke:#f4efe8;stroke-linecap:round}
+.card[data-s=stamp] .brush .b1{stroke-width:14;opacity:.92}
+.card[data-s=stamp] .brush .b2{stroke-width:5;opacity:.5}
+.card[data-s=stamp] .brush circle{fill:#f4efe8}
+.card[data-s=stamp] .pm{position:absolute;right:18px;top:22px;width:84px;transform:rotate(-14deg);color:#f4efe8;opacity:.6;pointer-events:none}
+.card[data-s=stamp] .pm circle{fill:none;stroke:currentColor;stroke-width:1.5}
+.card[data-s=stamp] .pm text{font:600 8.5px 'Poppins';fill:currentColor}
+.card[data-s=stamp] .pm .pi{font:700 20px 'Poppins'}
+.card[data-s=stamp] .who h1{font-size:1.5rem}
+.card[data-s=stamp] .ttl{font-size:.95rem}
+.card[data-s=stamp] .info{font-size:.84rem;opacity:1}
+.card[data-s=stamp] .side::before{background:url("paper.jpg") center/400px repeat,url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='3'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .13 0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+/* ===== stamp card v2: wine red + slate + copper ===== */
+body[data-style=stamp] {
+  background: url("background.png") center / cover no-repeat, #2d3033;
+  background-attachment: fixed;
+}
+
+/* soft cast shadow on the stone, follows the card's angle */
+.float{position:relative;isolation:isolate}
+body[data-style=stamp] .float::before,body[data-style=stamp] .float::after{content:"";position:absolute;z-index:-1;opacity:0;pointer-events:none}
+body[data-style=stamp] .float::before{inset:10px 8px 0;border-radius:34px;background:rgba(0,0,0,.62);transform:translate(18px,34px) scale(var(--sx,1),var(--sy,1));filter:blur(26px)}
+body[data-style=stamp] .float::after{inset:20px 14px 4px;border-radius:30px;background:rgba(0,0,0,.55);transform:translate(7px,12px) scale(var(--sx,1),var(--sy,1));filter:blur(9px)}
+body[data-style=stamp] .float:has(.card.show)::before,body[data-style=stamp] .float:has(.card.show)::after{opacity:var(--so,1);animation:shin 1.4s .8s backwards}
+@keyframes shin{from{opacity:0}}
+
+.card[data-s=stamp] .side,.card[data-s=stamp] .front{background:linear-gradient(180deg,#921e1e,#6a1010)}
+.card[data-s=stamp] .side::before{z-index:2}
+.card[data-s=stamp] .wave{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.card[data-s=stamp] .wave .gl{fill:none;stroke:rgba(226,169,129,.5);stroke-width:.8;vector-effect:non-scaling-stroke}
+.card[data-s=stamp] .brand{color:#f3e9e1}
+.card[data-s=stamp] .brand.bc{left:0;right:0;top:24%;text-align:center}
+.card[data-s=stamp] .who{color:#dfe3e5}
+.card[data-s=stamp] .who h1,.card[data-s=stamp] .who h1 b{font-weight:400}
+.card[data-s=stamp] .info.em{border-top-color:rgba(226,169,129,.4)}
+.card[data-s=stamp] .pal{position:absolute;right:30px;top:188px;font-size:34px;line-height:1;text-shadow:0 2px 4px rgba(0,0,0,.4)}
+.card[data-s=stamp] .pm{position:absolute;right:18px;top:22px;width:84px;transform:rotate(-14deg);color:#e2a981;opacity:1}
+.card[data-s=stamp] .pm circle{fill:none;stroke:currentColor;stroke-width:1.5}
+.card[data-s=stamp] .pm text{font:600 8.5px 'Poppins';fill:currentColor}
+.card[data-s=stamp] .pm .pi{fill:#6e1414;font:700 25px 'Cormorant Garamond',serif}
+
+
+/* ===== STAMP CARD: light from the front + reflection ===== */
+
+/* background picture: warm light in the middle, dark vignette at the edges */
+body[data-style=stamp]{
+  background:
+    radial-gradient(ellipse 70% 65% at 50% 40%, rgba(255,238,220,.16) 0%, transparent 60%),
+    radial-gradient(ellipse at 50% 40%, transparent 30%, rgba(0,0,0,.78) 100%),
+    url("background.png") center / cover no-repeat,
+    #2d3033;
+  background-attachment: fixed;
+}
+
+/* shadow falls straight behind the card, since light comes from the front */
+body[data-style=stamp] .float::before{transform:translate(0,32px) scale(var(--sx,1),var(--sy,1))}
+body[data-style=stamp] .float::after{transform:translate(0,11px) scale(var(--sx,1),var(--sy,1))}
+
+/* reflection on the card (front and back) */
+.card[data-s=stamp]{--gx:50%;--gy:24%;--gi:1}
+.card[data-s=stamp] .side::after{
+  content:"";position:absolute;inset:0;z-index:3;pointer-events:none;
+  background:
+    radial-gradient(circle at var(--gx) var(--gy), rgba(255,255,255,.42) 0, rgba(255,255,255,.14) 22%, transparent 50%),
+    linear-gradient(115deg, transparent 32%, rgba(255,255,255,.10) 43%, rgba(255,255,255,.22) 49%, rgba(255,255,255,.06) 56%, transparent 66%),
+    radial-gradient(ellipse at 50% 22%, transparent 35%, rgba(0,0,0,.30) 100%);
+  mix-blend-mode:overlay;
+  opacity:var(--gi);
+}
+.btn {
+    color: #a0a0a0;
+    position: relative;
+}
+.btn::before, .btn::after {
+    content: '';
+    position: absolute;
+    width: 14px;
+    height: 14px;
+    border: 2px solid #666;
+    transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.btn::before {
+    top: 4px; left: 4px;
+    border-right: none; border-bottom: none;
+}
+.btn::after {
+    bottom: 4px; right: 4px;
+    border-left: none; border-top: none;
+}
+.btn:hover::before, .btn:hover::after {
+    width: calc(100% - 8px);
+    height: calc(100% - 8px);
+    border-color: #00ff88;
+}
+.btn:hover {
+    color: #00ff88;
+}
+/* ===== one aligned column: button, card, buttons ===== */
+.stage{width:272px;gap:20px;align-items:stretch}
+.card{width:272px}
+
+/* change-design button: no longer pinned to the top, same width as the card */
+.styleBtn{position:static;transform:none;width:auto;align-self:center;padding-inline:28px;margin-bottom:14px}
+
+/* save + visit: share the card's width equally */
+.actions{gap:12px}
+.actions button,.actions a{flex:1;display:flex;align-items:center;justify-content:center}
+
+/* ===== eh Frosted glass buttons effect create karda aa (first card only) ===== */
+body[data-style=stamp] .actions button,
+body[data-style=stamp] .actions a,
+body[data-style=stamp] .styleBtn{
+  background:rgba(255,255,255,.08);
+  -webkit-backdrop-filter:blur(12px);
+  backdrop-filter:blur(12px);
+  border-color:rgba(255,255,255,.18);
+  color:#e8edf2;
+  box-shadow:0 4px 16px rgba(0,0,0,.25);
+  transition:background .4s cubic-bezier(.4,0,.2,1),
+             border-color .4s cubic-bezier(.4,0,.2,1),
+             translate .4s cubic-bezier(.4,0,.2,1),
+             box-shadow .4s cubic-bezier(.4,0,.2,1);
+}
+
+/* lifts up and glows a little brighter on hover / tap */
+@media (hover:hover){
+  body[data-style=stamp] .actions button:hover,
+  body[data-style=stamp] .actions a:hover,
+  body[data-style=stamp] .styleBtn:hover{
+    background:rgba(255,255,255,.16);
+    border-color:rgba(255,255,255,.4);
+    color:#fff;
+    translate:0 -3px;
+    box-shadow:0 12px 32px rgba(0,0,0,.4);
+  }
+}
+body[data-style=stamp] .actions button:active,
+body[data-style=stamp] .actions a:active,
+body[data-style=stamp] .styleBtn:active{
+  background:rgba(255,255,255,.16);
+  border-color:rgba(255,255,255,.4);
+  color:#fff;
+  translate:0 -3px;
+}

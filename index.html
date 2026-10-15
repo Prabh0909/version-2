@@ -1,0 +1,39 @@
+<!DOCTYPE html>         <!--every web html start with this code -->
+
+<html lang="en">        <!--this the lenguage we useing for codeing, English-->
+
+<head>                  <!--this is head or face of site all links and title is here-->
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Artist Card</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Gochi+Hand&family=Patrick+Hand&family=Poppins:wght@300;400;500;600&family=Noto+Sans+Devanagari&family=Chakra+Petch:wght@500;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;1,500&family=Jost:wght@300;400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css">
+</head>
+
+<!--body ithoo, In body we have three button -->
+
+<body data-style="stamp">
+
+<main class="stage">
+  <button id="styleBtn" class="styleBtn">Change design</button>
+  <div class="float">
+    <div class="spin" id="spin">
+      <div class="card" id="card"><!-- card sides are built by script.js --></div>
+    </div>
+  </div>
+  <div class="actions">
+    <button id="saveBtn">Save card</button>
+    <a id="siteBtn" href="#" target="_blank" rel="noopener">Visit site</a>
+  </div>
+</main>
+
+<div id="qrTemp" hidden></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+<script src="script.js"></script>
+
+</body>
+</html>
